@@ -25,7 +25,8 @@
     "node-mailjet": "^5.1.1",
     "sharp": "^0.31.2",
     "speakeasy": "^2.0.0",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
