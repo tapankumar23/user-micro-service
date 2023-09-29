@@ -46,7 +46,14 @@ jobs:
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
-
+      - name: Check Mochawesome Report Directory
+        run: |
+          if [ -d "./mochawesome-report" ]; then
+            echo "Mochawesome Report directory exists. Uploading..."
+          else
+            echo "Mochawesome Report directory does not exist. Creating it..."
+            mkdir ./mochawesome-report
+          fi
       - name: Checkout code
         uses: actions/checkout@v3 
 
