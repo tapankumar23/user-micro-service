@@ -39,7 +39,7 @@ describe('User Routes, Controller, and Factory (Unit Tests)', () => {
             "password":"t23s70y"
         });
         // Add assertions for the expected behavior
-        chai.expect(response).to.have.status(200); 
+        chai.expect(response).to.have.status(201); 
         sinon.assert.calledWithExactly(User.createUser, {
             "name":"ravi",
             "age":27,
