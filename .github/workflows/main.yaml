@@ -32,7 +32,6 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          mkdir -p ./mochawesome-report
           npm run unit
           exit_code=$?
           if [ $exit_code -ne 0 ]; then
@@ -40,46 +39,26 @@ jobs:
             exit 1 # Exit with an error code to indicate failure
           fi
 
-      - name: Upload reports
-        if: ${{ always() }}
-        run: |
-          echo "Unit Tests reports."
-
-
-  upload-mochawesome:
-    name: Upload Mochawesome Report
-    needs: [unit-test] # Make this job dependent on unit-test
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check Mochawesome Report Directory
-        run: |
-          if [ -d "./mochawesome-report" ]; then
-            echo "Mochawesome Report directory exists. Uploading..."
-          else
-            echo "Mochawesome Report directory does not exist. Creating it..."
-            mkdir ./mochawesome-report
-          fi
-      - name: Checkout code
-        uses: actions/checkout@v3 
-
       - name: Upload Mochawesome Report
+        if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
           name: mochawesome-report
           path: ./mochawesome-report
 
       - name: Set up Git
+        if: ${{ always() }}
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: Commit and Push Mochawesome Report
+        if: ${{ always() }}
         run: |
           git checkout -B gh-pages
           git add ./mochawesome-report
           git commit -m "Add Mochawesome report"
-          git push -f origin gh-pages          
+          git push -f origin gh-pages 
 
   integration-test:
     name: Integration Tests
