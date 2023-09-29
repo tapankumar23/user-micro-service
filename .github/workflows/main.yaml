@@ -84,6 +84,7 @@ jobs:
 
   build:
     name: User app
+    needs: [unit-test,integration-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
     strategy: 
