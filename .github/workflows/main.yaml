@@ -30,6 +30,15 @@ jobs:
       - name: Run Unit Tests
         run: |
           npm run unit
+          npx mochawesome-report-generator --reportDir ./mochawesome-report --reportTitle "Unit Test Report"
+        working-directory: ./  # Set the working directory where your package.json is located
+        
+      - name: Upload Mochawesome Report
+        if: always() # Run this step even if previous steps fail
+        uses: actions/upload-artifact@v2
+        with:
+          name: mochawesome-report
+          path: ./mochawesome-report
 
   integration-test:
     name: Integration Tests

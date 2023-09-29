@@ -121,5 +121,4 @@ module.exports = {
     deleteMe,
     uploadProfile,
     deleteProfile
-
 }
