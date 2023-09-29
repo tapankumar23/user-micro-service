@@ -34,11 +34,11 @@ To execute the CI/CD workflow, follow these steps:
 1. **Clone the Repository:**
    - Clone the User Service repository to your local machine using Git:
      ```bash
-     git clone https://github.com/raghumntv/user-service.git
+     git clone https://github.com/raghumntv/user-micro-service.git
      ```
    - Change your working directory to the cloned repository:
      ```bash
-     cd user-service
+     cd user-micro-service
      ```
 
 2. **Push Code to `main` Branch or Raise a Pull Request:**
