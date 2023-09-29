@@ -34,7 +34,14 @@ jobs:
         run: |
           npm run unit
           exit_code=$?
-              
+          npm run upload-mochawesome
+          exit $exit_code
+
+  upload-mochawesome:
+    name: Upload Mochawesome Report
+    needs: [unit-test] # Make this job dependent on unit-test
+    runs-on: ubuntu-latest
+    steps:            
       - name: Upload Mochawesome Report
         uses: actions/upload-artifact@v3
         with:
@@ -78,7 +85,7 @@ jobs:
   build:
     name: User app
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true # Only run on push to main branch
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Only run on push to main branch
 
     strategy: 
       matrix:
