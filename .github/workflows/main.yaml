@@ -32,6 +32,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
+          mkdir -p ./mochawesome-report
           npm run unit
           exit_code=$?
           if [ $exit_code -ne 0 ]; then
@@ -48,7 +49,14 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v3 
-                    
+
+      - name: Check if Mochawesome Report directory exists
+        run: |
+          if [ ! -d "./mochawesome-report" ]; then
+            echo "Mochawesome Report directory does not exist."
+            exit 1 # Exit with an error code
+          fi 
+                             
       - name: Upload Mochawesome Report
         uses: actions/upload-artifact@v3
         with:
