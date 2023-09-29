@@ -42,6 +42,7 @@ jobs:
   upload-mochawesome:
     name: Upload Mochawesome Report
     needs: [unit-test] # Make this job dependent on unit-test
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:            
       - name: Upload Mochawesome Report
