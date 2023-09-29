@@ -40,6 +40,12 @@ jobs:
             exit 1 # Exit with an error code to indicate failure
           fi
 
+      - name: Upload reports
+        if: ${{ always() }}
+        run: |
+          echo "Unit Tests reports."
+
+
   upload-mochawesome:
     name: Upload Mochawesome Report
     needs: [unit-test] # Make this job dependent on unit-test
