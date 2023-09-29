@@ -27,9 +27,31 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Clean Up Old Report Files
+        run: rm -rf ./mochawesome-report
+
       - name: Run Unit Tests
         run: |
           npm run unit
+        
+      - name: Upload Mochawesome Report
+        if: always() # Run this step even if previous steps fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: mochawesome-report
+          path: ./mochawesome-report
+          
+      - name: Set up Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: Commit and Push Mochawesome Report
+        run: |
+          git checkout -B gh-pages
+          git add ./mochawesome-report
+          git commit -m "Add Mochawesome report"
+          git push -f origin gh-pages          
 
   integration-test:
     name: Integration Tests
