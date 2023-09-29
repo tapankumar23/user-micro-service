@@ -44,7 +44,11 @@ jobs:
     needs: [unit-test] # Make this job dependent on unit-test
     if: ${{ always() }}
     runs-on: ubuntu-latest
-    steps:            
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3 
+                    
       - name: Upload Mochawesome Report
         uses: actions/upload-artifact@v3
         with:
