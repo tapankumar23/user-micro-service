@@ -27,6 +27,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Clean Up Old Report Files
+        run: rm -rf ./mochawesome-report
+
       - name: Run Unit Tests
         run: |
           npm run unit
