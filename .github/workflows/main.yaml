@@ -27,8 +27,8 @@ jobs:
 #            SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
-              -Dsonar.organization=Sushant
-              -Dsonar.projectKey=sushantad-tv
+              -Dsonar.organization=sushantad-tv
+              -Dsonar.projectKey=sushantad-tv_user-micro-service
 
   unit-test:
     name: Unit Tests
