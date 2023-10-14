@@ -24,7 +24,6 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#            SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
               -Dsonar.organization=sushantad-tv
@@ -156,3 +155,14 @@ jobs:
         run: |
           npm install
           npm test
+
+  slack-notfication:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: '#otaku-2-workshop-slack-integration-testing'
