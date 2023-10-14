@@ -169,11 +169,11 @@ jobs:
       - name: Notify slack
         uses: pullreminders/slack-action@master
         with:
-          status: ${{ job.status }}
-          steps: ${{ toJson(steps) }}
-          channel: '#otaku-2-workshop-slack-integration-testing'
+#          status: ${{ job.status }}
+#          steps: ${{ toJson(steps) }}
+#          channel: '#otaku-2-workshop-slack-integration-testing'
 
-#          args: '{\"channel\":\"C1234567890\",\"text\":\"Hello world\"}'
+          args: '{\"channel\":\"C0612NY969K\",\"text\":\"Hello world\"}'
 #      - name: Send Slack Notification
 #        uses: act10ns/slack@v1
 #        with:
