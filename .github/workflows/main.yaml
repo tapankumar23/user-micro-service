@@ -173,7 +173,7 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: $${{ secrets.SLACK_WEBHOOK_URL }}
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL: otaku-2-workshop-slack-integration-testing
           SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
           #      SLACK_ICON: https://github.com/rtCamp.png?size=48
