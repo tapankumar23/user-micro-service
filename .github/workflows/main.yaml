@@ -1,4 +1,4 @@
-name: Node.JS CI/CD
+name: User Service CI/CD
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Use Node.js
+      - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
@@ -92,7 +92,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Use Node.js
+      - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
@@ -105,7 +105,7 @@ jobs:
           npm run integration          
 
   build:
-    name: User app
+    name: Build application
     needs: [unit-test,integration-test]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
@@ -117,12 +117,12 @@ jobs:
       - name: Checkout 
         uses: actions/checkout@v3 
 
-      - name: Use Node.JS ${{ matrix.node-version }}
+      - name: Set up Node
         uses: actions/setup-node@v3 
         with: 
           node-version: ${{ matrix.node-version }}
 
-      - name: NPM install,build
+      - name: build
         run: |
           docker-compose build   
               
@@ -133,23 +133,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps: 
-      - name: Deploy to production
+      - name: Deploy to Staging
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
           service-id: ${{ secrets.SERVICE_ID }} # Can be found as part of the Deploy Hook
           api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
       - name: Deploy to prod
         run: |
-          echo "code deployed to production"
+          echo "code deployed to Staging"
 
-  #Test job
   e2e-tests:
     name: E2E tests
     needs: [deploy]
     runs-on: ubuntu-latest
  
     steps:
-      - name: Checkout Test Repository
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: main
