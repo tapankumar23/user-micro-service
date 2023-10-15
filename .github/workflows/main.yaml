@@ -83,7 +83,7 @@ jobs:
 
   integration-test:
     name: Integration Tests
-    needs: [static-analysis]
+    needs: [unit-test]
     runs-on: ubuntu-latest
 
     steps:
