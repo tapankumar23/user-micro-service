@@ -52,34 +52,27 @@ jobs:
         run: rm -rf ./mochawesome-report
 
       - name: Run Unit Tests
-        run: |
-          npm run unit
-          exit_code=$?
-          if [ $exit_code -ne 0 ]; then
-            echo "Unit Tests failed."
-            exit 1 # Exit with an error code to indicate failure
-          fi
+        run: npm run unit
 
       - name: Upload Mochawesome Report
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
-          name: mochawesome-report
+          name: test-result
           path: ./mochawesome-report
-
-      - name: Set up Git
-        if: ${{ always() }}
+      - name: Copy test execution result
         run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          mkdir public
+          cp -r ./mochawesome-report public
+          mv ./mochawesome-report/mochawesome.html public/index.html
 
-      - name: Commit and Push Mochawesome Report
-        if: ${{ always() }}
-        run: |
-          git checkout -B gh-pages
-          git add ./mochawesome-report
-          git commit -m "Add Mochawesome report"
-          git push -f origin gh-pages 
+      - name: Deploy report page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
 
   integration-test:
     name: Integration Tests
@@ -101,8 +94,7 @@ jobs:
         run: npm install
 
       - name: Run Integration Tests
-        run: |
-          npm run integration          
+        run: npm run integration
 
   build:
     name: Build application
@@ -138,9 +130,6 @@ jobs:
         with:
           service-id: ${{ secrets.SERVICE_ID }} # Can be found as part of the Deploy Hook
           api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
-      - name: Deploy to prod
-        run: |
-          echo "code deployed to Staging"
 
   e2e-tests:
     name: E2E tests
