@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-      - name: SonarCloud Scan
+      - name: Sonar Scan
         uses: sonarsource/sonarcloud-github-action@master
         env:
             GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
@@ -155,18 +155,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Notify slack
+      - name: Checkout code
+
+        uses: abinoda/slack-action@master
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        with:
+          args: '{\"channel\":\"C0612NY969K\",\"text\":\"Hello world\"}'
+
 #        id: slack
 #        uses: slackapi/slack-github-action@v1.24.0
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: $${{ secrets.SLACK_WEBHOOK_URL }}
+#        uses: rtCamp/action-slack-notify@v2
+#        env:
+#          SLACK_WEBHOOK: $${{ secrets.SLACK_WEBHOOK_URL }}
 #          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          SLACK_CHANNEL: otaku-2-workshop-slack-integration-testing
-          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-          #      SLACK_ICON: https://github.com/rtCamp.png?size=48
-          SLACK_MESSAGE: "GitHub build result: ${{ job.status }}\n${{ github.event.head_commit.url }}"
-          SLACK_TITLE: User App action
+#          SLACK_CHANNEL: otaku-2-workshop-slack-integration-testing
+#          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+#          #      SLACK_ICON: https://github.com/rtCamp.png?size=48
+#          SLACK_MESSAGE: "GitHub build result: ${{ job.status }}\n${{ github.event.head_commit.url }}"
+#          SLACK_TITLE: User App action
 #        with:
 #          channel-id: 'C0612NY969K'
 #          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
