@@ -29,6 +29,12 @@ jobs:
           args: >
             -Dsonar.organization=sushantad-tv
             -Dsonar.projectKey=sushantad-tv_user-micro-service
+      - name: SonarQube Quality Gate check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+          # Force to fail step after specific time
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   #        uses: sonarsource/sonarcloud-github-action@master
   #        env:
   #            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
