@@ -91,7 +91,7 @@ jobs:
 
   integration-test:
     name: Integration Tests
-    needs: [unit-test]
+    needs: [static-analysis]
     runs-on: ubuntu-latest
 
     steps:
@@ -130,8 +130,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: build
-        run: |
-          docker-compose build   
+        run: docker-compose build
 
   deploy:
     name: Deploy
@@ -155,16 +154,19 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: main
+
       - name: Run tests
         run: |
           npm install
           npm test
+
       - name: Upload Mochawesome Report
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
           name: test-result
           path: ./mochawesome-report
+
       - name: Copy test execution result
         run: |
           mkdir public
