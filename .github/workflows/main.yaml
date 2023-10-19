@@ -31,7 +31,7 @@ jobs:
 
   unit-test:
     name: Unit Tests
-    needs: [static-analysis]
+#    needs: [static-analysis]
     runs-on: ubuntu-latest
 
     steps:
