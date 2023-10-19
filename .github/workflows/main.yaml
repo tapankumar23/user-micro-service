@@ -23,8 +23,8 @@ jobs:
       - name: Sonar Scan
         uses: kitabisa/sonarqube-action@v1.2.0
         with:
-          host: ${{ secrets.SONARQUBE_HOST }}
-          login: https://sonarcloud.io
+          host: https://sonarcloud.io
+          login: ${{ secrets.SONAR_TOKEN }}
           projectKey: sushantad-tv_user-micro-service
   #        uses: sonarsource/sonarcloud-github-action@master
   #        env:
