@@ -1,15 +1,16 @@
 name: User Service CI/CD
 
 on:
-  push:
-    branches:
-      - main
+#  push:
+#    branches:
+#      - main
   pull_request:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
+
   static-analysis:
     name: Static Analysis
     runs-on: ubuntu-latest
@@ -19,15 +20,49 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
+
       - name: Sonar Scan
-        uses: sonarsource/sonarcloud-github-action@master
+        uses: sonarsource/sonarqube-scan-action@master
         env:
-            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
-              -Dsonar.organization=sushantad-tv
-              -Dsonar.projectKey=sushantad-tv_user-micro-service
+            -Dsonar.organization=sushantad-tv
+            -Dsonar.projectKey=sushantad-tv_user-micro-service
+
+      - name: Sonar Quality Gate check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  #        uses: sonarsource/sonarcloud-github-action@master
+  #        env:
+  #            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+  #            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #        with:
+  #          args: >
+  #              -Dsonar.organization=sushantad-tv
+  #              -Dsonar.projectKey=sushantad-tv_user-micro-service
+
+#  static-analysis:
+#    name: Static Analysis
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v3
+#        with:
+#          ref: ${{ github.event.pull_request.head.ref }}
+#      - name: Sonar Scan
+#        uses: sonarsource/sonarcloud-github-action@master
+#        env:
+#            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+#            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        with:
+#          args: >
+#              -Dsonar.organization=sushantad-tv
+#              -Dsonar.projectKey=sushantad-tv_user-micro-service
 
   unit-test:
     name: Unit Tests
