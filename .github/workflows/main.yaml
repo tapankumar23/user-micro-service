@@ -26,6 +26,7 @@ jobs:
           host: https://sonarcloud.io
           login: ${{ secrets.SONAR_TOKEN }}
           projectKey: sushantad-tv_user-micro-service
+          projectName: sushantad-tv
   #        uses: sonarsource/sonarcloud-github-action@master
   #        env:
   #            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
