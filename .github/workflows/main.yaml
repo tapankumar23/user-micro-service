@@ -21,13 +21,14 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Sonar Scan
-        uses: kitabisa/sonarqube-action@v1.2.0
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
         with:
-          host: https://sonarcloud.io
-          login: ${{ secrets.SONAR_TOKEN }}
-          projectKey: sushantad-tv_user-micro-service
           args: >
-              -Dsonar.organization=sushantad-tv
+            -Dsonar.organization=sushantad-tv
+            -Dsonar.projectKey=sushantad-tv_user-micro-service
   #        uses: sonarsource/sonarcloud-github-action@master
   #        env:
   #            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
