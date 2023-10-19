@@ -97,7 +97,6 @@ jobs:
       - name: build
         run: |
           docker-compose build   
-              
 
   deploy:
     name: Deploy
@@ -125,7 +124,6 @@ jobs:
         run: |
           npm install
           npm test
-
       - name: Upload Mochawesome Report
         if: ${{ always() }}
         uses: actions/upload-artifact@v3

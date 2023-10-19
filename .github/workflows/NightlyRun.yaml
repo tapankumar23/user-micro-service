@@ -7,8 +7,7 @@ on:
 
 jobs:
   smoke-tests:
-    name: E2E tests
-    needs: [deploy]
+    name: Smoke tests
     runs-on: ubuntu-latest
  
     steps:
@@ -20,3 +19,22 @@ jobs:
         run: |
           npm install
           npm test
+      - name: Upload Mochawesome Report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-result
+          path: ./mochawesome-report
+      - name: Copy test execution result
+        run: |
+          mkdir public
+          cp -r ./mochawesome-report public
+          mv ./mochawesome-report/mochawesome.html public/index.html
+
+      - name: Deploy report page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
