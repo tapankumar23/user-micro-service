@@ -15,21 +15,6 @@ describe('User Routes, Controller, and Factory (Unit Tests)', () => {
             email: 'dummy@example.com',
             age: 77
         });
-        try {
-            var a = 0
-        } catch (error) {
-            new Error("hello");
-        }
-        try {
-            var b = 0
-        } catch (error) {
-            new Error("hello");
-        }
-        try {
-            var c = 0
-        } catch (error) {
-            new Error("hello");
-        }
           // Stub user.generateAuthToken to return a mock token
         const generateAuthTokenStub = sinon.stub().resolves('your-generated-token-here');
         createUserStub.returns({ generateAuthToken: generateAuthTokenStub });        });
