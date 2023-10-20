@@ -37,7 +37,7 @@ jobs:
 
   unit-test:
     name: Unit Tests
-    needs: [static-analysis]
+#    needs: [static-analysis]
     runs-on: ubuntu-latest
 
     steps:
@@ -54,9 +54,11 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Clean Up Old Report Files
+        run: rm -rf ./mochawesome-report
+
       - name: Run Unit Tests
         run: npm run unit
-
       - name: Upload Mochawesome Report
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
