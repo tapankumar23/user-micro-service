@@ -10,7 +10,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   static-analysis:
     name: Static Analysis
     runs-on: ubuntu-latest
@@ -25,44 +24,16 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
-            -Dsonar.organization=sushantad-tv
-            -Dsonar.projectKey=sushantad-tv_user-micro-service
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
 
       - name: Sonar Quality Gate check
         uses: sonarsource/sonarqube-quality-gate-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  #        uses: sonarsource/sonarcloud-github-action@master
-  #        env:
-  #            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-  #            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  #        with:
-  #          args: >
-  #              -Dsonar.organization=sushantad-tv
-  #              -Dsonar.projectKey=sushantad-tv_user-micro-service
-
-#  static-analysis:
-#    name: Static Analysis
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout Code
-#        uses: actions/checkout@v3
-#        with:
-#          ref: ${{ github.event.pull_request.head.ref }}
-#      - name: Sonar Scan
-#        uses: sonarsource/sonarcloud-github-action@master
-#        env:
-#            GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-#            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#        with:
-#          args: >
-#              -Dsonar.organization=sushantad-tv
-#              -Dsonar.projectKey=sushantad-tv_user-micro-service
 
   unit-test:
     name: Unit Tests
@@ -180,48 +151,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-
-#  slack-notfication:
-#    name: Slack Notification
-#    needs: [e2e-tests]
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Checkout code
-#
-#        uses: abinoda/slack-action@master
-#        env:
-#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-#        with:
-#          args: '{\"channel\":\"C0612NY969K\",\"blocks\":[{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Repository pushed to:* ${{ github.event.repository.name }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Pusher:* ${{ github.event.pusher.name }}\n*Commit Message:* ${{ github.event.head_commit.message }}\"}},{\"type\":\"section\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"<${{ github.event.repository.html_url }}|View Repository>\"}}]}'
-#        if: failure()
-#        id: slack
-#        uses: slackapi/slack-github-action@v1.24.0
-#        uses: rtCamp/action-slack-notify@v2
-#        env:
-#          SLACK_WEBHOOK: $${{ secrets.SLACK_WEBHOOK_URL }}
-#          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-#          SLACK_CHANNEL: otaku-2-workshop-slack-integration-testing
-#          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
-#          #      SLACK_ICON: https://github.com/rtCamp.png?size=48
-#          SLACK_MESSAGE: "GitHub build result: ${{ job.status }}\n${{ github.event.head_commit.url }}"
-#          SLACK_TITLE: User App action
-#        with:
-#          channel-id: 'C0612NY969K'
-#          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
-#          slack-message: "GitHub build result: ${{ job.status }}\n${{ github.event.head_commit.url }}"
-#        uses: pullreminders/slack-action@master
-#        with:
-#          status: ${{ job.status }}
-#          steps: ${{ toJson(steps) }}
-#          channel: '#otaku-2-workshop-slack-integration-testing'
-#          args: '{\"channel\":\"C0612NY969K\",\"text\":\"Hello world\"}'
-#      - name: Send Slack Notification
-#        uses: act10ns/slack@v1
-#        with:
-#          status: ${{ job.status }}
-#          steps: ${{ toJson(steps) }}
-#          channel: '#otaku-2-workshop-slack-integration-testing'
+          user_name: ${{ secrets.GIT_BOT_USERNAME }}
+          user_email: ${{ secrets.GIT_BOT_EMAIL }}
