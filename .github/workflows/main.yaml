@@ -70,7 +70,8 @@ jobs:
       - name: Copy test execution result
         run: |
           mkdir public
-          mv mochawesome-report public
+          mv mochawesome-report/* public
+          mv public/mochawesome.html public/index.html
 
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
