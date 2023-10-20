@@ -43,22 +43,23 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
-          name: mochawesome-report
+          name: test-result
           path: ./mochawesome-report
 
-      - name: Set up Git
-        if: ${{ always() }}
+      - name: Copy test execution result
         run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          mkdir public
+          cp -r ./mochawesome-report public
+          mv ./mochawesome-report/mochawesome.html public/index.html
 
-      - name: Commit and Push Mochawesome Report
-        if: ${{ always() }}
-        run: |
-          git checkout -B gh-pages
-          git add ./mochawesome-report
-          git commit -m "Add Mochawesome report"
-          git push -f origin gh-pages 
+      - name: Deploy report page
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+
 
   integration-test:
     name: Integration Tests
