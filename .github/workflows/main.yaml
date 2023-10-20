@@ -142,27 +142,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: main || true
+          ref: main
 
       - name: Run tests
         run: |
-          npm install || true
-          npm test || true
+          npm install
+          npm test
 
       - name: Upload Mochawesome Report
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: test-result
-          path: mochawesome-report || true
+          path: mochawesome-report
 
-      - name: Copy test execution result
+  report:
+    name: E2E tests report
+    needs: [ e2e-tests ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Mochawesome Report
+        uses: actions/download-artifact@v2
+        with:
+          name: test-result
+          path: mochawesome-report
+
+      - name: Prepare public directory
         run: |
-          mkdir -p public || true
-          cp -r mochawesome-report/* public || true
-          mv public/mochawesome.html public/index.html || true
+          mkdir public
+          cp -r mochawesome-report/* public
+          mv public/mochawesome.html public/index.html
 
       - name: Deploying to gh-pages
+        if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: public || true
+          publish_dir: public
