@@ -130,19 +130,18 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: test-result
+          name: test-results
           path: mochawesome-report
 
   report:
     name: E2E tests report
-    needs: [ e2e-tests ]
     runs-on: ubuntu-latest
 
     steps:
       - name: Download Mochawesome Report
         uses: actions/download-artifact@v2
         with:
-          name: test-result
+          name: test-results
           path: mochawesome-report
 
       - name: Prepare public directory
