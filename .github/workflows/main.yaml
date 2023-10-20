@@ -1,4 +1,4 @@
-name: Node.JS CI/CD
+name: User Service CI/CD
 
 on:
   push:
@@ -7,10 +7,37 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
+#  static-analysis:
+#    name: Static Analysis
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v3
+#        with:
+#          ref: ${{ github.event.pull_request.head.ref }}
+#
+#      - name: Sonar Scan
+#        uses: sonarsource/sonarqube-scan-action@master
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+#        with:
+#          args: >
+#            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+#            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+#
+#      - name: Sonar Quality Gate check
+#        uses: sonarsource/sonarqube-quality-gate-action@master
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   unit-test:
     name: Unit Tests
+    needs: [static-analysis]
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +46,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Use Node.js
+      - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
@@ -27,30 +54,21 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Clean Up Old Report Files
-        run: rm -rf ./mochawesome-report
-
       - name: Run Unit Tests
-        run: |
-          npm run unit
-          exit_code=$?
-          if [ $exit_code -ne 0 ]; then
-            echo "Unit Tests failed."
-            exit 1 # Exit with an error code to indicate failure
-          fi
+        run: npm run unit
 
       - name: Upload Mochawesome Report
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
         with:
           name: test-result
-          path: ./mochawesome-report
+          path: mochawesome-report
 
       - name: Copy test execution result
         run: |
           mkdir public
-          cp -r ./mochawesome-report public
-          mv ./mochawesome-report/mochawesome.html public/index.html
+          cp -r mochawesome-report public
+          mv mochawesome-report/mochawesome.html public/index.html
 
       - name: Deploy report page
         uses: peaceiris/actions-gh-pages@v3
@@ -60,79 +78,99 @@ jobs:
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
 
-
-  integration-test:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Integration Tests
-        run: |
-          npm run integration          
-
-  build:
-    name: User app
-    needs: [unit-test,integration-test]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
-    strategy: 
-      matrix:
-        node-version: [16.x]
-
-    steps:
-      - name: Checkout 
-        uses: actions/checkout@v3 
-
-      - name: Use Node.JS ${{ matrix.node-version }}
-        uses: actions/setup-node@v3 
-        with: 
-          node-version: ${{ matrix.node-version }}
-
-      - name: NPM install,build
-        run: |
-          docker-compose build   
-              
-  # Deploy job to fit render.com
-  deploy:
-    name: Deploy
-    needs: [build,unit-test,integration-test] # Our tests must pass in order to run the deploy job
-    runs-on: ubuntu-latest
-
-    steps: 
-      - name: Deploy to production
-        uses: johnbeynon/render-deploy-action@v0.0.8
-        with:
-          service-id: ${{ secrets.SERVICE_ID }} # Can be found as part of the Deploy Hook
-          api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
-      - name: Deploy to prod
-        run: |
-          echo "code deployed to production"
-
-  #Test job
-  test:
-    name: E2E tests
-    needs: [deploy]
-    runs-on: ubuntu-latest
- 
-    steps:
-      - name: Checkout Test Repository
-        uses: actions/checkout@v3
-        with:
-          ref: main
-      - name: Run tests
-        run: |
-          npm install
-          npm test
+#  integration-test:
+#    name: Integration Tests
+#    needs: [unit-test]
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout Code
+#        uses: actions/checkout@v3
+#        with:
+#          ref: ${{ github.event.pull_request.head.ref }}
+#
+#      - name: Set up Node
+#        uses: actions/setup-node@v3
+#        with:
+#          node-version: 16.x
+#
+#      - name: Install Dependencies
+#        run: npm install
+#
+#      - name: Run Integration Tests
+#        run: npm run integration
+#
+#  build:
+#    name: Build application
+#    needs: [unit-test,integration-test]
+#    runs-on: ubuntu-latest
+#    # do we really need all these conditions
+#    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
+#    #    strategy:
+#    #      matrix:
+#    #        node-version: [16.x]
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#
+#      - name: Set up Node
+#        uses: actions/setup-node@v3
+#        with:
+#          #          node-version: ${{ matrix.node-version }}
+#          node-version: 16.x
+#
+#      - name: build
+#        run: docker-compose build
+#
+#  deploy:
+#    name: Deploy
+#    # I think we can have dependency on build job only
+#    needs: [build,unit-test,integration-test] # Our tests must pass in order to run the deploy job
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Deploy to Staging
+#        uses: johnbeynon/render-deploy-action@v0.0.8
+#        with:
+#          service-id: ${{ secrets.SERVICE_ID }} # Can be found as part of the Deploy Hook
+#          api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
+#
+#  e2e-tests:
+#    name: E2E tests
+#    needs: [deploy]
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          ref: main
+#
+#      - name: Run tests
+#        run: |
+#          npm install
+#          npm test
+#
+#      - name: Upload Mochawesome Report
+#        if: ${{ always() }}
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: test-result
+#          path: ./mochawesome-report
+#
+#      - name: Copy test execution result
+#        if: ${{ always() }}
+#        run: |
+#          mkdir public
+#          cp -r ./mochawesome-report public
+#          mv ./mochawesome-report/mochawesome.html public/index.html
+#
+#      - name: Deploy report page
+#        if: ${{ always() }}
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: ./public
+#          user_name: ${{ secrets.GIT_BOT_USERNAME }}
+#          user_email: ${{ secrets.GIT_BOT_EMAIL }}
