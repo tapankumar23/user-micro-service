@@ -61,7 +61,7 @@ jobs:
         run: npm run unit
 
       - name: Upload Mochawesome Report
-        if: ${{ always() }}
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: test-result
@@ -148,7 +148,7 @@ jobs:
           npm test
 
       - name: Upload Mochawesome Report
-        if: ${{ always() }}
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: test-result
