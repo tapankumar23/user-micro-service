@@ -10,34 +10,34 @@ on:
   workflow_dispatch:
 
 jobs:
-#  static-analysis:
-#    name: Static Analysis
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout Code
-#        uses: actions/checkout@v3
-#        with:
-#          ref: ${{ github.event.pull_request.head.ref }}
-#
-#      - name: Sonar Scan
-#        uses: sonarsource/sonarqube-scan-action@master
-#        env:
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-#        with:
-#          args: >
-#            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-#            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-#
-#      - name: Sonar Quality Gate check
-#        uses: sonarsource/sonarqube-quality-gate-action@master
-#        env:
-#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #  static-analysis:
+  #    name: Static Analysis
+  #    runs-on: ubuntu-latest
+  #
+  #    steps:
+  #      - name: Checkout Code
+  #        uses: actions/checkout@v3
+  #        with:
+  #          ref: ${{ github.event.pull_request.head.ref }}
+  #
+  #      - name: Sonar Scan
+  #        uses: sonarsource/sonarqube-scan-action@master
+  #        env:
+  #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+  #        with:
+  #          args: >
+  #            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+  #            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+  #
+  #      - name: Sonar Quality Gate check
+  #        uses: sonarsource/sonarqube-quality-gate-action@master
+  #        env:
+  #          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   unit-test:
     name: Unit Tests
-#    needs: [static-analysis]
+    #    needs: [static-analysis]
     runs-on: ubuntu-latest
 
     steps:
@@ -59,6 +59,7 @@ jobs:
 
       - name: Run Unit Tests
         run: npm run unit
+
       - name: Upload Mochawesome Report
         if: ${{ always() }}
         uses: actions/upload-artifact@v3
@@ -69,7 +70,6 @@ jobs:
       - name: Copy test execution result
         run: |
           mkdir public
-#          cp -r mochawesome-report public
           mv mochawesome-report public
 
       - name: Deploy report page
