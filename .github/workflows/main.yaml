@@ -133,18 +133,6 @@ jobs:
           name: test-results
           path: mochawesome-report
 
-#      - name: Copy test execution result
-#        run: |
-#          mkdir public
-#          mv mochawesome-report/* public
-#          mv public/mochawesome.html public/index.html
-#
-#      - name: Deploying to gh-pages
-#        uses: peaceiris/actions-gh-pages@v3
-#        with:
-#          github_token: ${{ secrets.GITHUB_TOKEN }}
-#          publish_dir: build
-
   generate-report:
     name: Generating Report
     needs: [ e2e-tests ]
@@ -155,11 +143,12 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: test-results
+          path: mochawesome-report
 
       - name: Copy test execution result
         run: |
           mkdir public
-          mv test-results/* public
+          mv mochawesome-report/* public
           mv public/mochawesome.html public/index.html
 
       - name: Deploying to gh-pages
