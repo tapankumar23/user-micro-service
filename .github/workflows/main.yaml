@@ -37,7 +37,7 @@ jobs:
 
   unit-test:
     name: Unit Tests
-    needs: [static-analysis]
+    needs: [ static-analysis ]
     runs-on: ubuntu-latest
 
     steps:
@@ -54,19 +54,39 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Clean Up Old Report Files
+        run: rm -rf ./mochawesome-report
+
       - name: Run Unit Tests
         run: npm run unit
 
+      - name: Upload Mochawesome Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-result
+          path: mochawesome-report
+
+      - name: Copy test execution result
+        run: |
+          mkdir public
+          mv mochawesome-report/* public
+          mv public/mochawesome.html public/index.html
+
+      - name: Deploying to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build
+
   integration-test:
     name: Integration Tests
-    needs: [unit-test]
+    needs: [ unit-test ]
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Node
         uses: actions/setup-node@v3
@@ -81,22 +101,18 @@ jobs:
 
   build:
     name: Build application
-    needs: [unit-test,integration-test]
+    needs: [ unit-test,integration-test ]
     runs-on: ubuntu-latest
     # do we really need all these conditions
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
-#    strategy:
-#      matrix:
-#        node-version: [16.x]
+    #    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
 
     steps:
-      - name: Checkout 
-        uses: actions/checkout@v3 
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Set up Node
-        uses: actions/setup-node@v3 
-        with: 
-#          node-version: ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
           node-version: 16.x
 
       - name: build
@@ -104,11 +120,11 @@ jobs:
 
   deploy:
     name: Deploy
-     # I think we can have dependency on build job only
-    needs: [build,unit-test,integration-test] # Our tests must pass in order to run the deploy job
+    # I think we can have dependency on build job only
+    needs: [ build,unit-test,integration-test ] # Our tests must pass in order to run the deploy job
     runs-on: ubuntu-latest
 
-    steps: 
+    steps:
       - name: Deploy to Staging
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
@@ -117,9 +133,9 @@ jobs:
 
   e2e-tests:
     name: E2E tests
-    needs: [deploy]
+    needs: [ deploy ]
     runs-on: ubuntu-latest
- 
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -132,24 +148,20 @@ jobs:
           npm test
 
       - name: Upload Mochawesome Report
-        if: ${{ always() }}
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: test-result
-          path: ./mochawesome-report
+          path: mochawesome-report
 
       - name: Copy test execution result
-        if: ${{ always() }}
         run: |
           mkdir public
-          cp -r ./mochawesome-report public
-          mv ./mochawesome-report/mochawesome.html public/index.html
+          mv mochawesome-report/* public
+          mv public/mochawesome.html public/index.html
 
-      - name: Deploy report page
-        if: ${{ always() }}
+      - name: Deploying to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          user_name: ${{ secrets.GIT_BOT_USERNAME }}
-          user_email: ${{ secrets.GIT_BOT_EMAIL }}
+          publish_dir: build
