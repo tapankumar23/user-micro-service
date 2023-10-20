@@ -106,7 +106,7 @@ jobs:
     needs: [ unit-test,integration-test ]
     runs-on: ubuntu-latest
     # do we really need all these conditions
-    #    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
 
     steps:
       - name: Checkout
