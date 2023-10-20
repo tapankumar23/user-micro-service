@@ -85,6 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     # do we really need all these conditions
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -117,7 +118,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           ref: main
 
@@ -128,7 +129,7 @@ jobs:
 
       - name: Upload Mochawesome Report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: test-results
           path: mochawesome-report
@@ -139,20 +140,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download report artifact
+      - name: Download Mochawesome Report
         uses: actions/download-artifact@v2
         with:
           name: test-results
           path: mochawesome-report
 
-      - name: Copy test execution result
+      - name: Prepare public directory
         run: |
           mkdir public
-          mv mochawesome-report/* public
+          cp -r mochawesome-report/* public
           mv public/mochawesome.html public/index.html
 
       - name: Deploying to gh-pages
+        if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: build
+          publish_dir: public
