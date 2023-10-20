@@ -130,13 +130,36 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: test-result
+          name: test-results
           path: mochawesome-report
+
+#      - name: Copy test execution result
+#        run: |
+#          mkdir public
+#          mv mochawesome-report/* public
+#          mv public/mochawesome.html public/index.html
+#
+#      - name: Deploying to gh-pages
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: build
+
+  generate-report:
+    name: Generating Report
+    needs: [ e2e-tests ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download report artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: test-results
 
       - name: Copy test execution result
         run: |
           mkdir public
-          mv mochawesome-report/* public
+          mv test-results/* public
           mv public/mochawesome.html public/index.html
 
       - name: Deploying to gh-pages
