@@ -54,30 +54,8 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Clean Up Old Report Files
-        run: rm -rf ./mochawesome-report
-
       - name: Run Unit Tests
         run: npm run unit
-
-      - name: Upload Mochawesome Report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-result
-          path: mochawesome-report
-
-      - name: Copy test execution result
-        run: |
-          mkdir public
-          mv mochawesome-report/* public
-          mv public/mochawesome.html public/index.html
-
-      - name: Deploying to gh-pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: build
 
   integration-test:
     name: Integration Tests
@@ -87,6 +65,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up Node
         uses: actions/setup-node@v3
@@ -100,12 +80,11 @@ jobs:
         run: npm run integration
 
   build:
-    name: Build application
+    name: Build
     needs: [ unit-test,integration-test ]
     runs-on: ubuntu-latest
     # do we really need all these conditions
-    #    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
-
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -132,7 +111,7 @@ jobs:
           api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
 
   e2e-tests:
-    name: E2E tests
+    name: E2E Tests
     needs: [ deploy ]
     runs-on: ubuntu-latest
 
