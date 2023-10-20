@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 
 describe('User Routes, Controller, and Factory (Unit Tests)', () => {
     before(() => {
-         // Stub User.createUser to return a Dummy user..
+         // Stub User.createUser to return a Dummy user.
        const createUserStub = sinon.stub(User, 'createUser').resolves({
             _id: '65153b534b51b249d08d138c',
             name: 'Dummy User',

@@ -80,23 +80,18 @@ jobs:
         run: npm run integration
 
   build:
-    name: Build application
+    name: Build
     needs: [unit-test,integration-test]
     runs-on: ubuntu-latest
     # do we really need all these conditions
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
-#    strategy:
-#      matrix:
-#        node-version: [16.x]
-
     steps:
       - name: Checkout 
         uses: actions/checkout@v3 
 
       - name: Set up Node
         uses: actions/setup-node@v3 
-        with: 
-#          node-version: ${{ matrix.node-version }}
+        with:
           node-version: 16.x
 
       - name: build
@@ -116,7 +111,7 @@ jobs:
           api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
 
   e2e-tests:
-    name: E2E tests
+    name: E2E Tests
     needs: [deploy]
     runs-on: ubuntu-latest
  
