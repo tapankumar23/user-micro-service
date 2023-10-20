@@ -9,6 +9,3 @@ jobs:
   smoke-tests:
     name: Smoke tests
     runs-on: ubuntu-latest
-    steps:
-      - name: Print a message
-        run: echo "Running smoke tests"
