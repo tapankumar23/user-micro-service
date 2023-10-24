@@ -15,10 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-#      - name: Checkout Code
-#        uses: actions/checkout@v3
-#        with:
-#          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Sonar Scan
         uses: sonarsource/sonarqube-scan-action@master
@@ -84,8 +80,7 @@ jobs:
     needs: [ unit-tests,integration-tests ]
     runs-on: ubuntu-latest
     # do we really need all these conditions
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
-
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-tests.result == 'success' # Only run on push to main branch if unit-test succeeds
     steps:
       - name: Checkout
         uses: actions/checkout@v3
