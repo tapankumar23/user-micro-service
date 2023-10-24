@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
+#      - name: Checkout Code
+#        uses: actions/checkout@v3
+#        with:
+#          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Sonar Scan
         uses: sonarsource/sonarqube-scan-action@master
@@ -35,7 +35,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  unit-test:
+  unit-tests:
     name: Unit Tests
     needs: [ static-analysis ]
     runs-on: ubuntu-latest
@@ -57,9 +57,9 @@ jobs:
       - name: Run Unit Tests
         run: npm run unit
 
-  integration-test:
+  integration-tests:
     name: Integration Tests
-    needs: [ unit-test ]
+    needs: [ unit-tests ]
     runs-on: ubuntu-latest
 
     steps:
@@ -81,7 +81,7 @@ jobs:
 
   build:
     name: Build
-    needs: [ unit-test,integration-test ]
+    needs: [ unit-tests,integration-tests ]
     runs-on: ubuntu-latest
     # do we really need all these conditions
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-test.result == 'success' # Only run on push to main branch if unit-test succeeds
@@ -101,7 +101,7 @@ jobs:
   deploy:
     name: Deploy
     # I think we can have dependency on build job only
-    needs: [ build,unit-test,integration-test ] # Our tests must pass in order to run the deploy job
+    needs: [ build,unit-tests,integration-tests ] # Our tests must pass in order to run the deploy job
     runs-on: ubuntu-latest
 
     steps:
