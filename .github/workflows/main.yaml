@@ -132,6 +132,7 @@ jobs:
   generate-report:
     name: Generating Report
     needs: [ e2e-tests ]
+    if: needs.e2e-tests.result == 'success' || needs.e2e-tests.result == 'failure'
     runs-on: ubuntu-latest
 
     steps:
