@@ -6,9 +6,10 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Select the environment'
         required: true
         default: 'dev'
+        description: Select an environment
+        type: choice
         options:
           - dev
           - staging
@@ -24,6 +25,5 @@ jobs:
           npm install
           npm test
 
-
       - name: Set environment variable
-        run: echo "ENVIRONMENT=${{ github.event.inputs.environment || 'dev' }}" >> $GITHUB_ENV
+        run: echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
