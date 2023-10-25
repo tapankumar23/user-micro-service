@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
+    inputs:
+      env_name:
+        description: 'Env name'
+        required: true
 
 jobs:
   smoke-tests:
@@ -11,4 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print a message
-        run: echo "Running smoke tests"
+        run: |
+          npm install
+          npm test
+
+
+      - name: Set environment variable
+        run: echo "YOUR_VARIABLE_NAME=${{ github.event.inputs.env_name }}" >> $GITHUB_ENV
