@@ -5,9 +5,14 @@ on:
     - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
-      env_name:
-        description: 'Env name'
+      environment:
+        description: 'Select the environment'
         required: true
+        default: 'dev'
+        options:
+          - dev
+          - staging
+          - production
 
 jobs:
   smoke-tests:
@@ -21,4 +26,4 @@ jobs:
 
 
       - name: Set environment variable
-        run: echo "YOUR_VARIABLE_NAME=${{ github.event.inputs.env_name }}" >> $GITHUB_ENV
+        run: echo "ENVIRONMENT=${{ github.event.inputs.environment || 'dev' }}" >> $GITHUB_ENV

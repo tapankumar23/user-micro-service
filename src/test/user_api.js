@@ -3,8 +3,8 @@ const chai = require('chai');
 const expect = chai.expect;
 
 describe('User Routes, Controller, and Factory (end-to-end test)', async () => {
-    const envName = process.env.YOUR_VARIABLE_NAME;
-    console.log(`Running test on ${envName}`);
+    const environment = process.env.ENVIRONMENT;
+    console.log(`Running test on ${environment}`);
 
     it('User Routes, Controller, and Factory (end-to-end test)', async () => {
 
