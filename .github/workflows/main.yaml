@@ -130,7 +130,7 @@ jobs:
   generate-report:
     name: Generating Report
     needs: [ e2e-tests ]
-    if: needs.e2e-tests.result != 'skipped'
+    if: needs.e2e-tests.result == 'failed' || needs.e2e-tests.result == 'success'
     runs-on: ubuntu-latest
 
     steps:
@@ -140,15 +140,15 @@ jobs:
           name: test-results
           path: mochawesome-report
 
-      - name: Prepare public directory
+      - name: Prepare report directory
         run: |
-          mkdir public
-          cp -r mochawesome-report/* public
-          mv public/mochawesome.html public/index.html
+          mkdir report
+          cp -r mochawesome-report/* report
+          mv report/mochawesome.html report/index.html
 
       - name: Deploying to gh-pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: public
+          publish_dir: report
