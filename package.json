@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
-    "test": "mocha src/test/user_api.js --reporter mochawesome",
+    "smoke": "mocha src/test/smoke_tests.js --reporter mochawesome",
+    "regression": "mocha src/test/regression_tests.js --reporter mochawesome",
     "unit": "mocha src/unit/ --reporter mochawesome",
     "integration": "mocha src/integration/"
   },
