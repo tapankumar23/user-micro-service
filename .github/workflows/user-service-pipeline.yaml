@@ -118,7 +118,7 @@ jobs:
   generate-report:
     name: Generate Report
     needs: [ smoke-tests ]
-    if: needs.smoke-tests.outcome == 'failure' || needs.smoke-tests.outcome == 'success'
+#    if: needs.smoke-tests.outcome == 'failure' || needs.smoke-tests.outcome == 'success'
     runs-on: ubuntu-latest
 
     steps:
@@ -138,5 +138,5 @@ jobs:
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GIT_TOKEN }}
           publish_dir: report
