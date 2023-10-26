@@ -55,7 +55,7 @@ jobs:
 
   smoke-tests:
     name: Smoke Tests
-    needs: [ deploy ]
+    needs: [ integration-tests ]
     runs-on: ubuntu-latest
 
     steps:
