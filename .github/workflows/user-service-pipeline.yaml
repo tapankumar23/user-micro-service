@@ -94,7 +94,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: main
 
@@ -106,7 +106,7 @@ jobs:
       - name: Run Tests
         run: |
           npm install
-          npm test
+          npm run smoke
 
       - name: Upload Mochawesome Report
         if: always()

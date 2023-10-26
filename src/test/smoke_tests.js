@@ -4,7 +4,7 @@ const expect = chai.expect;
 
 describe('Checking health of the service', async () => {
 
-    it('Health Check', async () => {
+    it('Health Check @smoke', async () => {
 
         const response = await fetch('https://user-task-3kj1.onrender.com/users');
         expect(response.status).to.equal(200);
