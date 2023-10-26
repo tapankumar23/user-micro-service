@@ -1,4 +1,4 @@
-name: User Service CI/CD
+name: User Service Pipeline
 
 on:
   push:
@@ -74,48 +74,36 @@ jobs:
       - name: Run Integration Tests
         run: npm run integration
 
-  build:
-    name: Build
+  deploy:
+    name: Deploy
     needs: [ unit-tests,integration-tests ]
     runs-on: ubuntu-latest
-    # do we really need all these conditions
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-tests.result == 'success' # Only run on push to main branch if unit-test succeeds
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-tests.result == 'success'
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Deploy Service
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
+
+  smoke-tests:
+    name: Smoke Tests
+    needs: [ deploy ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          ref: main
 
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
 
-      - name: build
-        run: docker-compose build
-
-  deploy:
-    name: Deploy
-    needs: [ build,unit-tests,integration-tests ] # Our tests must pass in order to run the deploy job
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Deploy to Staging
-        uses: johnbeynon/render-deploy-action@v0.0.8
-        with:
-          service-id: ${{ secrets.SERVICE_ID }} # Can be found as part of the Deploy Hook
-          api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
-
-  e2e-tests:
-    name: E2E Tests
-    needs: [ deploy ]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: main
-
-      - name: Run tests
+      - name: Run Tests
         run: |
           npm install
           npm test
@@ -128,9 +116,9 @@ jobs:
           path: mochawesome-report
 
   generate-report:
-    name: Generating Report
-    needs: [ e2e-tests ]
-    if: needs.e2e-tests.result == 'failed' || needs.e2e-tests.result == 'success'
+    name: Generate Report
+    needs: [ smoke-tests ]
+    if: needs.smoke-tests.outcome == 'failure' || needs.smoke-tests.outcome == 'success'
     runs-on: ubuntu-latest
 
     steps:
@@ -140,13 +128,13 @@ jobs:
           name: test-results
           path: mochawesome-report
 
-      - name: Prepare report directory
+      - name: Prepare Report Directory
         run: |
           mkdir report
           cp -r mochawesome-report/* report
           mv report/mochawesome.html report/index.html
 
-      - name: Deploying to gh-pages
+      - name: Deploying to Github Pages
         if: always()
         uses: peaceiris/actions-gh-pages@v3
         with:
