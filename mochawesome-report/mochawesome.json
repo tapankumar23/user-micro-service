@@ -1,0 +1,119 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 2,
+    "pending": 0,
+    "failures": 0,
+    "start": "2023-10-26T14:17:53.912Z",
+    "end": "2023-10-26T14:17:54.277Z",
+    "duration": 365,
+    "testsRegistered": 2,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "cc2b61d3-d598-4aed-adfc-d31f02a2b393",
+      "title": "",
+      "fullFile": "/Users/sdasgupta3/Documents/TestVagrant/Otaku-2.0/Workshop/Github_Repo/user-micro-service/src/test/regression_tests.js",
+      "file": "/src/test/regression_tests.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "9152e314-c5b6-416a-81b3-d596e48f744d",
+          "title": "User service regression tests",
+          "fullFile": "/Users/sdasgupta3/Documents/TestVagrant/Otaku-2.0/Workshop/Github_Repo/user-micro-service/src/test/regression_tests.js",
+          "file": "/src/test/regression_tests.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "Regression Test 1",
+              "fullTitle": "User service regression tests Regression Test 1",
+              "timedOut": false,
+              "duration": 186,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const response = await fetch('https://user-task-3kj1.onrender.com/users');\n        expect(response.status).to.equal(200);\n        const data = await response.json();\n        console.log(data);",
+              "err": {},
+              "uuid": "06219441-fb3d-42f1-82fb-ba58d60047e7",
+              "parentUUID": "9152e314-c5b6-416a-81b3-d596e48f744d",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Regression Test 2",
+              "fullTitle": "User service regression tests Regression Test 2",
+              "timedOut": false,
+              "duration": 177,
+              "state": "passed",
+              "speed": "slow",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "const response = await fetch('https://user-task-3kj1.onrender.com/users');\n        expect(response.status).to.equal(200);\n        const data = await response.json();\n        console.log(data);",
+              "err": {},
+              "uuid": "7cac72c6-7aa7-408d-9808-e3a463758803",
+              "parentUUID": "9152e314-c5b6-416a-81b3-d596e48f744d",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "06219441-fb3d-42f1-82fb-ba58d60047e7",
+            "7cac72c6-7aa7-408d-9808-e3a463758803"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 363,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "10.2.0"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": null,
+      "version": "6.2.0"
+    }
+  }
+}

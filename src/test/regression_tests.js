@@ -6,7 +6,7 @@ describe('User service regression tests', async () => {
 
     it('Regression Test 1', async () => {
 
-        const response = await fetch('https://user-task-3kj1.onrender.com/users');
+        const response = await fetch('https://user-service-azky.onrender.com/api/user/get-all-users');
         expect(response.status).to.equal(200);
         const data = await response.json();
         console.log(data);
@@ -14,7 +14,7 @@ describe('User service regression tests', async () => {
 
     it('Regression Test 2', async () => {
 
-        const response = await fetch('https://user-task-3kj1.onrender.com/users');
+        const response = await fetch('https://user-service-azky.onrender.com/api/user/get-all-users');
         expect(response.status).to.equal(200);
         const data = await response.json();
         console.log(data);
