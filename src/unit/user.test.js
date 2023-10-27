@@ -43,25 +43,6 @@ describe('User Routes, Controller, and Factory (Unit Tests)', () => {
             "password":"t23s70y"
         });
       });
-
-        it('Failing test', async () => {
-            const response = await chai
-                .request(app)
-                .post('/api/user/sign-up')
-                .send({
-                    "name":"ravi",
-                    "age":27,
-                    "email":"ravi001101@tmpeml.com",
-                    "password":"t23s70y"
-                });
-            chai.expect(response).to.have.status(201);
-            sinon.assert.calledWithExactly(User.createUser, {
-                "name":"Ramesh",
-                "age":27,
-                "email":"ravi001101@tmpeml.com",
-                "password":"t23s70y"
-            });
-        });
     });
 });
 
