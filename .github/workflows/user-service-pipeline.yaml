@@ -10,9 +10,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  static-analysis:
+    name: Static Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Sonar Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+
+      - name: Sonar Quality Gate check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   unit-tests:
     name: Unit Tests
+    needs: [ static-analysis ]
     runs-on: ubuntu-latest
 
     steps:
@@ -52,13 +72,25 @@ jobs:
         run: npm install
 
       - name: Run Integration Tests
-        run: npm run integration
+        run: npm run unit
+
+  deploy:
+    name: Deploy
+    needs: [ unit-tests,integration-tests ]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-tests.result == 'success'
+
+    steps:
+      - name: Deploy Service
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API_KEY }}
 
   smoke-tests:
     name: Smoke Tests
-    needs: [ integration-tests ]
+    needs: [ deploy ]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && failure() != true && needs.unit-tests.result == 'success'
 
     steps:
       - name: Checkout Code
@@ -86,7 +118,6 @@ jobs:
   generate-report:
     name: Generate Report
     needs: [ smoke-tests ]
-#    if: needs.smoke-tests.outcome == 'failure' || needs.smoke-tests.outcome == 'success'
     runs-on: ubuntu-latest
 
     steps:

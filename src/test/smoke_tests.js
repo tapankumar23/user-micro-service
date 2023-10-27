@@ -6,7 +6,7 @@ describe('User service smoke tests', async () => {
 
     it('Should be able to get the users', async () => {
 
-        const response = await fetch('https://user-task-3kj1.onrender.com/users');
+        const response = await fetch('https://user-service-azky.onrender.com/api/user/get-all-users');
         expect(response.status).to.equal(200);
         const data = await response.json();
         console.log(data);
