@@ -82,6 +82,27 @@ jobs:
           name: test-results
           path: mochawesome-report
 
+  regression-tests:
+    name: Regression Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Regression Tests
+        run: npm run regression
+
   generate-report:
     name: Generate Report
     needs: [ smoke-tests ]
